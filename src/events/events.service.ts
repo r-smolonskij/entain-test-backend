@@ -7,14 +7,13 @@ import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EventEntity } from './entities/event.entity';
-import { Repository } from 'typeorm';
+import { EventEntityRepository } from './entities/event.entity.repository';
 
 @Injectable()
 export class EventsService {
-  events: EventEntity[] = [];
   constructor(
     @InjectRepository(EventEntity)
-    private eventRepository: Repository<EventEntity>,
+    private eventRepository: EventEntityRepository,
   ) {}
 
   async findAll(
@@ -92,9 +91,11 @@ export class EventsService {
   async update(id: number, updateEventDto: UpdateEventDto) {
     try {
       const event = await this.eventRepository.findOneBy({ id: id });
+      if (!event) {
+        throw new NotFoundException();
+      }
       if (event.status === 'finished' && updateEventDto.status !== 'finished') {
         throw new BadRequestException('Invalid data exception', {
-          cause: new Error(),
           description: 'Finished events cannot change status',
         });
       }
