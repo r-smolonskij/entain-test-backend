@@ -10,8 +10,8 @@ export class EventEntity {
   sport: 'football' | 'basketball' | 'hockey' | 'tennis';
   @Column()
   status: 'inactive' | 'active' | 'finished';
-  @Column('time')
+  @Column()
   startTime: Date;
-  @Column('time')
+  @Column()
   finishTime: Date;
 }
